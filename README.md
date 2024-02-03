@@ -2,7 +2,7 @@
 
 ### About
 
-MultiCat is an interactive visualisation technique for analysing multidimensional categorical data. Our prototype has been implemented in [Svelte](https://svelte.dev/) and can handle up to 20 nominal and ordinal variables. The starting point for this project was a template created by [Connor Rothschild](https://www.connorrothschild.com/) for his /newline course, ["Better Data Visualizations with Svelte"](https://www.newline.co/courses/better-data-visualizations-with-svelte/welcome).
+MultiCat is an interactive visualisation technique for analysing multidimensional categorical data. Our prototype has been implemented in [Svelte](https://svelte.dev/) and can handle up to 20 nominal and ordinal variables. The starting point for this project was a template created by [Connor Rothschild](https://www.connorrothschild.com/) for his *newline* course, [Better Data Visualizations with Svelte](https://www.newline.co/courses/better-data-visualizations-with-svelte/welcome).
 
 ![The MultiCat interface, including a spreadsheet view on the left and a sidebar on the right](/titanic.png)
 
