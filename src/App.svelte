@@ -1,10 +1,7 @@
 <script>
   // NB: This code is not optimal; it just demonstrates the concepts
   // TODO: Compartmentalise the code into different components (e.g. one for the sidebar)
-
-  // TODO: Change input data from JS to CSV format
-  // TODO: Allow users to upload their own datasets
-
+  
   // INPUT: Currently expects an array of objects (items) with the same properties (variables)
   // The property values are the categories
   // Datasets: titanic{2}.js, mushrooms{_all}.js, covid.js, crime.js, sleep.js
@@ -1471,17 +1468,18 @@
     padding: 8px 16px;
     display: flex;
     align-items: center;
-    gap: 12px;
+    justify-content: flex-start;
     height: 48px;
     box-sizing: border-box;
   }
   .header h1 {
-    margin: 0;
+    margin: 0 20px 0 0;
     font-size: 1.2rem;
     font-weight: bold;
     white-space: nowrap;
   }
   .header button {
+    margin: 0 20px 0 0;
     background: #f3f4f6;
     color: #374151;
     border: 1px solid #d1d5db;
