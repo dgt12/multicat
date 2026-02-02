@@ -945,7 +945,8 @@
 </header>
 
 <main>
-  <table>
+  <div class="table-container">
+    <table>
     <thead>
       <tr>
         {#each variables as property}
@@ -960,7 +961,7 @@
               title={`${property} ${
                 sortKey === property ? (sortOrder === "asc" ? "↑" : "↓") : ""
               }`.trim()}
-              style="position: sticky; top: 0; background: white; z-index: 1;"
+              style="position: sticky; top: 0; background: white; z-index: 10;"
             >
               <div class="heading-container">
                 <span class="heading">{property}</span>
@@ -986,7 +987,7 @@
           <th
             on:click={() => sortData("observed")}
             class="frequency-heading-container"
-            style="min-width: {maxFrequencyWidth}px; position: sticky; top: 0; background: white; z-index: 1;"
+            style="min-width: {maxFrequencyWidth}px; position: sticky; top: 0; background: white; z-index: 10;"
             title={`Frequency${
               sortKey === "observed"
                 ? sortOrder === "asc"
@@ -1023,7 +1024,7 @@
                 : " (↓)"
                 : ""
             }: The deviation of the given combination's observed frequency from its expected frequency (red=under-represented, blue=over-represented)`.trim()}
-            style="position: sticky; top: 0; background: white; z-index: 1; padding-right: 20px;"
+            style="position: sticky; top: 0; background: white; z-index: 10; padding-right: 20px;"
           >
             <span class="heading-container numeric">
               <span class="heading">Residual</span>
@@ -1115,6 +1116,7 @@
       {/each}
     </tbody>
   </table>
+  </div>
   <!-- Sidebar Markup -->
   <div class="sidebar">
     <div class="selected-data">
@@ -1304,10 +1306,10 @@
   /*TODO: Refactor all CSS rules*/
   .category-bars {
     margin-left: 0%;
+    flex: 1;
   }
   table {
     border-collapse: collapse;
-    overflow: scroll;
     /*max-width: 70vw;*/
     /*width: 75vw;*/
   }
@@ -1319,7 +1321,7 @@
     user-select: none;
     position: sticky;
     top: 0;
-    z-index: 1;
+    z-index: 10;
   }
   .sort-by-query-checkbox {
     font-size: 0.9rem;
@@ -1440,8 +1442,16 @@
     z-index: 100; /* Higher z-index to stay above other content */
     padding-top: 20px; /* Adjust padding as needed */
     padding-bottom: 10px;
-    border-bottom: 1px solid #d9d9d9;
-    /*box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2); /* Optional: Adds shadow for better separation */
+    position: relative;
+  }
+  .selected-data::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 20px;
+    right: 20px;
+    height: 1px;
+    background-color: #d9d9d9;
   }
   .progress-bar-container {
     display: flex;
@@ -1476,7 +1486,7 @@
     height: 48px;
     box-sizing: border-box;
     overflow: hidden; /* Prevent header from being wider than viewport */
-    width: 80%;
+    width: 100%;
   }
   .header-content {
     position: sticky;
@@ -1515,28 +1525,40 @@
 
   main {
     margin-right: 20%;
-    overflow-x: auto;
-    overflow-y: auto;
     width: 80%;
-    height: calc(100vh - 48px);
+    height: calc(100svh - 48px);
     box-sizing: border-box;
+    overflow-y: auto;
+    overflow-x: auto;
+    scrollbar-gutter: stable;
+    position: relative;
+    z-index: 1;
     display: block;
-    padding-right: 40px;
+  }
+
+  .table-container {
+    width: 100%;
   }
 
   .sidebar {
-    padding-left: 20px; /* Adjust this to match the left alignment */
-    padding-bottom: 90px;
-    padding-right: 20px;
+    padding-bottom: 80px; /* Space for fixed buttons */
     position: fixed;
     right: 0;
-    top: 0; /* Changed from 48px to 0 as it should now span full height if needed, or overlap header */
+    top: 0; /* Full height */
     width: 20%;
-    height: 100vh; /* Changed from calc(100vh - 48px) to 100vh */
+    height: 100svh; /* Full height */
     overflow-y: auto; /* Scrollbar if content overflows */
     background-color: white; /* Set the background to white */
     z-index: 2000; /* Ensure sidebar is above header (z-index 1000) */
     border-left: 1px solid #d9d9d9;
+    padding-top: 48px; /* Content below header */
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+  }
+  .selected-data, .category-bars {
+    padding-left: 20px;
+    padding-right: 20px;
   }
   .numeric {
     min-width: 92px; /* Adjust as needed to prevent truncation */
@@ -1661,11 +1683,24 @@
 
   .buttons {
     user-select: none;
-    position: sticky;
-    bottom: 0; /* Stick to the bottom of the sidebar */
-    background-color: white; /* Match background color of sidebar */
-    padding: 10px; /* Adjust padding as needed */
-    border-top: 1px solid #d9d9d9;
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    width: 20%;
+    background-color: white;
+    padding: 10px 20px;
+    border-left: 1px solid #d9d9d9;
+    box-sizing: border-box;
+    z-index: 2001; /* Above sidebar */
+  }
+  .buttons::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 20px;
+    right: 20px;
+    height: 1px;
+    background-color: #d9d9d9;
   }
 
   button.disabled {
