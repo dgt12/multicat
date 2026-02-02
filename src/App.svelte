@@ -925,20 +925,22 @@
 </script>
 
 <header class="header">
-  <h1>MultiCat</h1>
-  <input
-    id="file"
-    type="file"
-    accept=".csv,text/csv"
-    on:change={handleFile}
-    style="display:none"
-  />
-  <button on:click={() => document.getElementById("file").click()}
-    >Load Dataset…</button
-  >
-  <div class="hint">
-    {datasetName}
-    {itemCount ? `• ${itemCount} items` : ""}
+  <div class="header-content">
+    <h1>MultiCat</h1>
+    <input
+      id="file"
+      type="file"
+      accept=".csv,text/csv"
+      on:change={handleFile}
+      style="display:none"
+    />
+    <button on:click={() => document.getElementById("file").click()}
+      >Load Dataset…</button
+    >
+    <div class="hint">
+      {datasetName}
+      {itemCount ? `• ${itemCount} items` : ""}
+    </div>
   </div>
 </header>
 
@@ -958,6 +960,7 @@
               title={`${property} ${
                 sortKey === property ? (sortOrder === "asc" ? "↑" : "↓") : ""
               }`.trim()}
+              style="position: sticky; top: 0; background: white; z-index: 1;"
             >
               <div class="heading-container">
                 <span class="heading">{property}</span>
@@ -983,7 +986,7 @@
           <th
             on:click={() => sortData("observed")}
             class="frequency-heading-container"
-            style="min-width: {maxFrequencyWidth}px;"
+            style="min-width: {maxFrequencyWidth}px; position: sticky; top: 0; background: white; z-index: 1;"
             title={`Frequency${
               sortKey === "observed"
                 ? sortOrder === "asc"
@@ -1016,10 +1019,11 @@
             title={`Residual${
               sortKey === "deviation"
                 ? sortOrder === "asc"
-                  ? " (↑)"
-                  : " (↓)"
+                ? " (↑)"
+                : " (↓)"
                 : ""
             }: The deviation of the given combination's observed frequency from its expected frequency (red=under-represented, blue=over-represented)`.trim()}
+            style="position: sticky; top: 0; background: white; z-index: 1; padding-right: 20px;"
           >
             <span class="heading-container numeric">
               <span class="heading">Residual</span>
@@ -1091,7 +1095,7 @@
               >
             </div>
           </td>
-          <td title={`Residual: ${dataItem.deviation.toFixed(2)}`}>
+          <td title={`Residual: ${dataItem.deviation.toFixed(2)}`} style="padding-right: 20px;">
             <div class="deviation-container">
               {#if dataItem.deviation > 0}
                 <div
@@ -1465,12 +1469,23 @@
     background: white;
     color: black;
     border-bottom: 1px solid #e5e7eb;
-    padding: 8px 16px;
+    /* padding: 8px 16px; Removed to handle it in .header-content */
     display: flex;
     align-items: center;
     justify-content: flex-start;
     height: 48px;
     box-sizing: border-box;
+    overflow: hidden; /* Prevent header from being wider than viewport */
+    width: 80%;
+  }
+  .header-content {
+    position: sticky;
+    left: 0;
+    display: flex;
+    align-items: center;
+    padding: 8px 16px;
+    background: white;
+    width: fit-content;
   }
   .header h1 {
     margin: 0 20px 0 0;
@@ -1499,7 +1514,14 @@
   }
 
   main {
-    padding-top: 10px;
+    margin-right: 20%;
+    overflow-x: auto;
+    overflow-y: auto;
+    width: 80%;
+    height: calc(100vh - 48px);
+    box-sizing: border-box;
+    display: block;
+    padding-right: 40px;
   }
 
   .sidebar {
@@ -1508,12 +1530,12 @@
     padding-right: 20px;
     position: fixed;
     right: 0;
-    top: 48px; /* Adjusted for header */
+    top: 0; /* Changed from 48px to 0 as it should now span full height if needed, or overlap header */
     width: 20%;
-    height: calc(100vh - 48px); /* Adjusted for header */
+    height: 100vh; /* Changed from calc(100vh - 48px) to 100vh */
     overflow-y: auto; /* Scrollbar if content overflows */
     background-color: white; /* Set the background to white */
-    z-index: 10; /* Ensure sidebar is above other content */
+    z-index: 2000; /* Ensure sidebar is above header (z-index 1000) */
     border-left: 1px solid #d9d9d9;
   }
   .numeric {
