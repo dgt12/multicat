@@ -38,13 +38,6 @@
     await loadCSVText(text, file.name);
   }
 
-  function onLoadDatasetInfoEnter() {
-    // Implementation for info hover if needed
-  }
-  
-  function onLoadDatasetInfoLeave() {
-    // Implementation for info hover if needed
-  }
 
   onMount(async () => {
     try {
@@ -627,7 +620,7 @@
   ).length; // This will be the number of combination properties in the filtered array
 
   // Assuming the first item is a complete record
-  const totalVariables =
+  $: totalVariables =
     data && data.length > 0 ? Object.keys(data[0]).length : 0;
   // console.log("total variables:");
   // console.log(totalVariables);
@@ -635,7 +628,7 @@
   // Variable for the number of rows currently selected in the table
   $: selectedRows = matchedRows.filter((isMatch) => isMatch).length;
   // Variable for the total number of observed combinations for the given variables
-  $: totalRows = $processedData.length || 0.00001;
+  $: totalRows = $processedData.length;
 
   //$: console.log("Selected rows:", selectedRows);
 
@@ -950,25 +943,6 @@
     {datasetName}
     {itemCount ? `• ${itemCount} items` : ""}
   </div>
-  <span
-    class="info-btn"
-    style="margin-left: -6px;"
-    on:mouseenter={onLoadDatasetInfoEnter}
-    on:mouseleave={onLoadDatasetInfoLeave}
-  >
-    <svg
-      width="16"
-      height="16"
-      viewBox="0 0 16 16"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <circle cx="8" cy="8" r="8" />
-      <path
-        d="M7.25 11.5V6.75H8.75V11.5H7.25ZM8 5.75C7.79167 5.75 7.61458 5.67708 7.46875 5.53125C7.32292 5.38542 7.25 5.20833 7.25 5C7.25 4.79167 7.32292 4.61458 7.46875 4.46875C7.61458 4.32292 7.79167 4.25 8 4.25C8.20833 4.25 8.38542 4.32292 8.53125 4.46875C8.67708 4.61458 8.75 4.79167 8.75 5C8.75 5.20833 8.67708 5.38542 8.53125 5.53125C8.38542 5.67708 8.20833 5.75 8 5.75Z"
-      />
-    </svg>
-  </span>
 </header>
 
 <main>
@@ -1177,18 +1151,17 @@
         <div class="statistic">
           <span>Selected rows:</span>
           <span
-            >{selectedRows} ({((selectedRows / totalRows) * 100).toFixed(
-              0
-            )}%)</span
+            >{selectedRows} ({totalRows > 0
+              ? ((selectedRows / totalRows) * 100).toFixed(0)
+              : 0}%)</span
           >
         </div>
         <div class="statistic">
           <span>Variables shown:</span>
           <span
-            >{variablesShown} ({(
-              (variablesShown / totalVariables) *
-              100
-            ).toFixed(0)}%)</span
+            >{variablesShown} ({totalVariables > 0
+              ? ((variablesShown / totalVariables) * 100).toFixed(0)
+              : 0}%)</span
           >
         </div>
         <div class="sort-by-query-checkbox">
@@ -1343,7 +1316,6 @@
     /*background-color: #eee;*/
     left: 0;
     user-select: none;
-    position: -webkit-sticky;
     position: sticky;
     top: 0;
     z-index: 1;
@@ -1490,47 +1462,42 @@
     padding-top: 10px;
   }
   .header {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: white;
+    color: black;
+    border-bottom: 1px solid #e5e7eb;
+    padding: 8px 16px;
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: 0px 0px;
-    border-bottom: 1px solid #e5e7eb;
-    position: sticky;
-    top: 0;
-    background: #fff;
-    z-index: 10;
+    height: 48px;
+    box-sizing: border-box;
   }
   .header h1 {
     margin: 0;
     font-size: 1.2rem;
     font-weight: bold;
-    color: #000;
+    white-space: nowrap;
   }
   .header button {
-    padding: 8px 12px;
-    border: 1px solid #e5e7eb;
-    background: #f8fafc;
-    border-radius: 8px;
+    background: #f3f4f6;
+    color: #374151;
+    border: 1px solid #d1d5db;
+    padding: 4px 12px;
+    border-radius: 4px;
     cursor: pointer;
-    color: #000;
+    font-size: 0.9rem;
+    white-space: nowrap;
   }
   .header button:hover {
-    background: #f1f5f9;
+    background: #e5e7eb;
   }
   .header .hint {
-    color: var(--muted);
-    font-size: 0.9rem;
-  }
-  .header .info-btn {
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-  }
-  .header .info-btn svg circle {
-    fill: #777;
-  }
-  .header .info-btn svg path {
-    fill: white;
+    font-size: 0.85rem;
+    color: #6b7280;
+    white-space: nowrap;
   }
 
   main {
@@ -1538,18 +1505,18 @@
   }
 
   .sidebar {
-    padding-left: 20px;
+    padding-left: 20px; /* Adjust this to match the left alignment */
     padding-bottom: 90px;
     padding-right: 20px;
     position: fixed;
     right: 0;
-    top: 60px; /* Adjusted for new header height */
+    top: 48px; /* Adjusted for header */
     width: 20%;
-    height: calc(100vh - 60px); /* Adjusted for new header height */
-    overflow-y: auto;
-    background-color: white;
-    z-index: 10;
-    border-left: 1px solid #e5e7eb;
+    height: calc(100vh - 48px); /* Adjusted for header */
+    overflow-y: auto; /* Scrollbar if content overflows */
+    background-color: white; /* Set the background to white */
+    z-index: 10; /* Ensure sidebar is above other content */
+    border-left: 1px solid #d9d9d9;
   }
   .numeric {
     min-width: 92px; /* Adjust as needed to prevent truncation */
