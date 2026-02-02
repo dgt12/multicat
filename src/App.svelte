@@ -8,16 +8,62 @@
   // INPUT: Currently expects an array of objects (items) with the same properties (variables)
   // The property values are the categories
   // Datasets: titanic{2}.js, mushrooms{_all}.js, covid.js, crime.js, sleep.js
-  import data from "$data/possessives.js";
-  // import data from "$data/mushrooms.js";
-
-  // Log raw data
-  //console.log("Raw data:");
-  //console.log(data);
+  let data = [];
 
   // OTHER IMPORTS
   import { scaleOrdinal, scaleLinear } from "d3-scale";
   import { writable, get } from "svelte/store";
+  import { onMount } from "svelte";
+  import { csvParse } from "d3-dsv";
+
+  let datasetName = "";
+  let itemCount = 0;
+
+  async function loadCSVText(text, filename) {
+    data = csvParse(text);
+    datasetName = filename;
+    itemCount = data.length;
+
+    // Reset state for new data
+    variableVisibility = {};
+    isInitialLoad = true;
+    // Trigger reactivity
+    data = data;
+  }
+
+  async function handleFile(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const text = await file.text();
+    await loadCSVText(text, file.name);
+  }
+
+  function onLoadDatasetInfoEnter() {
+    // Implementation for info hover if needed
+  }
+  
+  function onLoadDatasetInfoLeave() {
+    // Implementation for info hover if needed
+  }
+
+  onMount(async () => {
+    try {
+      const res = await fetch(`${import.meta.env.BASE_URL}src/data/titanic.csv`);
+      if (res.ok) {
+        const text = await res.text();
+        await loadCSVText(text, "titanic.csv");
+      } else {
+        // Fallback for different environments if needed
+        const res2 = await fetch("src/data/titanic.csv");
+        if (res2.ok) {
+          const text2 = await res2.text();
+          await loadCSVText(text2, "titanic.csv");
+        }
+      }
+    } catch (err) {
+      console.error("Default load failed:", err);
+    }
+  });
 
   // Initialise processedData as a Svelte store
   const processedData = writable([]);
@@ -33,7 +79,7 @@
   let categoryCounts = {};
 
   // The total number of items/records in the full data set
-  const totalItems = data.length;
+  $: totalItems = data.length;
 
   // Converts the data to frequency form and calculates deviations
   function processData(selectedVariableNames) {
@@ -112,21 +158,22 @@
   }
 
   // Initialise variables from the original data
-  let variables = new Set();
-  if (data && data.length > 0) {
-    data.forEach((item) => {
-      Object.keys(item).forEach((key) => {
-        variables.add(key);
+  let variables = [];
+  $: {
+    let vars = new Set();
+    if (data && data.length > 0) {
+      data.forEach((item) => {
+        Object.keys(item).forEach((key) => {
+          vars.add(key);
+        });
       });
-    });
+    }
+    variables = Array.from(vars);
   }
-  variables = Array.from(variables);
-  //console.log("Categorical variables:");
-  //console.log(variables);
 
   // Get the initial order of the variables in the input file
   let initialVariableOrder = [];
-  $: if (data && data.length > 0 && !initialVariableOrder.length) {
+  $: if (data && data.length > 0) {
     initialVariableOrder = [...variables];
   }
 
@@ -151,9 +198,14 @@
 
   // Keep track of which variables to display
   let variableVisibility = {};
-  variables.forEach((variable) => {
-    variableVisibility[variable] = true; // Display all variables by default
-  });
+  $: {
+    // Only set visibility if it hasn't been set for these variables yet
+    variables.forEach((variable) => {
+      if (variableVisibility[variable] === undefined) {
+        variableVisibility[variable] = true;
+      }
+    });
+  }
 
   // Reactive statement to compute selectedVariableNames
   $: selectedVariableNames = Object.keys(variableVisibility).filter(
@@ -882,6 +934,43 @@
   }
 </script>
 
+<header class="header">
+  <h1>MultiCat</h1>
+  <input
+    id="file"
+    type="file"
+    accept=".csv,text/csv"
+    on:change={handleFile}
+    style="display:none"
+  />
+  <button on:click={() => document.getElementById("file").click()}
+    >Load Dataset…</button
+  >
+  <div class="hint">
+    {datasetName}
+    {itemCount ? `• ${itemCount} items` : ""}
+  </div>
+  <span
+    class="info-btn"
+    style="margin-left: -6px;"
+    on:mouseenter={onLoadDatasetInfoEnter}
+    on:mouseleave={onLoadDatasetInfoLeave}
+  >
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 16 16"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <circle cx="8" cy="8" r="8" />
+      <path
+        d="M7.25 11.5V6.75H8.75V11.5H7.25ZM8 5.75C7.79167 5.75 7.61458 5.67708 7.46875 5.53125C7.32292 5.38542 7.25 5.20833 7.25 5C7.25 4.79167 7.32292 4.61458 7.46875 4.46875C7.61458 4.32292 7.79167 4.25 8 4.25C8.20833 4.25 8.38542 4.32292 8.53125 4.46875C8.67708 4.61458 8.75 4.79167 8.75 5C8.75 5.20833 8.67708 5.38542 8.53125 5.53125C8.38542 5.67708 8.20833 5.75 8 5.75Z"
+      />
+    </svg>
+  </span>
+</header>
+
 <main>
   <table>
     <thead>
@@ -1400,19 +1489,67 @@
   .view-mode-selector {
     padding-top: 10px;
   }
+  .header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0px 0px;
+    border-bottom: 1px solid #e5e7eb;
+    position: sticky;
+    top: 0;
+    background: #fff;
+    z-index: 10;
+  }
+  .header h1 {
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #000;
+  }
+  .header button {
+    padding: 8px 12px;
+    border: 1px solid #e5e7eb;
+    background: #f8fafc;
+    border-radius: 8px;
+    cursor: pointer;
+    color: #000;
+  }
+  .header button:hover {
+    background: #f1f5f9;
+  }
+  .header .hint {
+    color: var(--muted);
+    font-size: 0.9rem;
+  }
+  .header .info-btn {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+  }
+  .header .info-btn svg circle {
+    fill: #777;
+  }
+  .header .info-btn svg path {
+    fill: white;
+  }
+
+  main {
+    padding-top: 10px;
+  }
+
   .sidebar {
-    padding-left: 20px; /* Adjust this to match the left alignment */
+    padding-left: 20px;
     padding-bottom: 90px;
     padding-right: 20px;
     position: fixed;
     right: 0;
-    top: 0;
+    top: 60px; /* Adjusted for new header height */
     width: 20%;
-    height: 100vh; /* Full height of the viewport */
-    overflow-y: auto; /* Scrollbar if content overflows */
-    background-color: white; /* Set the background to white */
-    z-index: 10; /* Ensure sidebar is above other content */
-    border-left: 1px solid #d9d9d9;
+    height: calc(100vh - 60px); /* Adjusted for new header height */
+    overflow-y: auto;
+    background-color: white;
+    z-index: 10;
+    border-left: 1px solid #e5e7eb;
   }
   .numeric {
     min-width: 92px; /* Adjust as needed to prevent truncation */
