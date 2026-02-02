@@ -1117,8 +1117,10 @@
     </tbody>
   </table>
   </div>
-  <!-- Sidebar Markup -->
-  <div class="sidebar">
+</main>
+
+<!-- Sidebar Markup -->
+<div class="sidebar">
     <div class="selected-data">
       <div class="selected-text">
         Selected items: {selectedItems.toLocaleString()} ({selectedPercentage.toFixed(
@@ -1298,15 +1300,15 @@
         Filter by selection</button
       >
       <button on:click={resetDisplay} class="reset">Reset</button>
-    </div>
   </div>
-</main>
+</div>
 
 <style>
   /*TODO: Refactor all CSS rules*/
   .category-bars {
     margin-left: 0%;
     flex: 1;
+    overflow-y: auto;
   }
   table {
     border-collapse: collapse;
@@ -1487,6 +1489,7 @@
     box-sizing: border-box;
     overflow: hidden; /* Prevent header from being wider than viewport */
     width: 100%;
+    padding-right: 20%;
   }
   .header-content {
     position: sticky;
@@ -1541,17 +1544,14 @@
   }
 
   .sidebar {
-    padding-bottom: 80px; /* Space for fixed buttons */
     position: fixed;
     right: 0;
-    top: 0; /* Full height */
+    top: 0;
     width: 20%;
-    height: 100svh; /* Full height */
-    overflow-y: auto; /* Scrollbar if content overflows */
+    height: 100svh;
     background-color: white; /* Set the background to white */
     z-index: 2000; /* Ensure sidebar is above header (z-index 1000) */
     border-left: 1px solid #d9d9d9;
-    padding-top: 48px; /* Content below header */
     display: flex;
     flex-direction: column;
     box-sizing: border-box;
@@ -1683,16 +1683,15 @@
 
   .buttons {
     user-select: none;
-    position: fixed;
-    bottom: 0;
-    right: 0;
-    width: 20%;
+    width: 100%;
+    height: 80px; /* Fixed height to match sidebar calculation */
     background-color: white;
     padding: 10px 20px;
-    border-left: 1px solid #d9d9d9;
     box-sizing: border-box;
     z-index: 2001; /* Above sidebar */
+    position: relative;
   }
+  /* Reintroduce the ::before pseudo-element with whitespace */
   .buttons::before {
     content: "";
     position: absolute;
