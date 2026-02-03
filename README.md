@@ -6,23 +6,9 @@ MultiCat is an interactive visualisation technique for analysing multidimensiona
 
 ### Demo
 
-A demo instance of the prototype, featuring the [Titanic data](https://www.datavis.ca/papers/titanic/data/Dawson_JSE_1995.pdf), is available at [https://dgt12.github.io/multicat/](https://dgt12.github.io/multicat/).
+A demo instance of the prototype, featuring the [Titanic data](https://www.datavis.ca/papers/titanic/data/Dawson_JSE_1995.pdf), is available at [https://dgt12.github.io/multicat/](https://dgt12.github.io/multicat/). You can also upload your own CSV files by clicking on the "Load Dataset..." button. Each file should have one row per item (as well as a header row at the top) and one column per variable. Ordinal categories should begin with a number denoting their order, followed by a space (e.g. "1 low", "2 medium", "3 high"). In the header, add the prefix "id_" to any non-categorical variables in order to exclude them from the visualisation.
 
 ![The MultiCat interface, including a spreadsheet view on the left and a sidebar on the right](/titanic.png)
-
-### Local Deployment
-
-You can load your own categorical data into MultiCat by following these instructions: 
-
-0. Install the following development tools on your machine: [Node.js](https://nodejs.org/en), [Visual Studio Code](https://code.visualstudio.com/) and [Python](https://www.python.org/downloads/), including the Pandas library.
-1. Download or clone the entire [multicat](https://github.com/dgt12/multicat) GitHub repository.
-2. Prepare a CSV file of the data you wish to analyse that contains *only* nominal and/or ordinal variables (one row per data item, one column per variable). Save this in the `multicat/src/data` folder.
-3. Open the Python script `convert_to_js.py` in the same `data` folder. Update the filename on line 9 to match the name of your CSV file, minus the `.csv` file extension. 
-4. Run `convert_to_js.py`. This will create a file in the `data` folder with the same name but with a `.js` extension. This is the format that MultiCat accepts as input.
-5. Open the entire `multicat` folder in Visual Studio Code. Update line 11 of `App.svelte` to reference your new `.js` file (`import data from "$data/<filename>.js";`). 
-7. Open a terminal within Visual Studio Code and enter the command `npm run dev`.
-7. Open the `localhost` link in Google Chrome.
-8. Start exploring the data!
 
 ### Contact
 

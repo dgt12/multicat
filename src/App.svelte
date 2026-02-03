@@ -955,11 +955,11 @@
             <line x1="12" y1="8" x2="12.01" y2="8" />
           </svg>
           <span class="info-tooltip-text">
-            Click "Load Dataset..." to upload your own CSV file. The file should
-            have one row per item and one column per variable, with a header row
-            at the top. Any non-categorical variables should be prefixed with
-            "id_" in the header, so that they are excluded from the
-            visualisation.
+Click "Load Dataset..." to upload your own CSV file. The file should have one row per item and one column per variable, with a header row at the top.
+
+Values for ordinal categories should begin with a number denoting their order, followed by a space (e.g. "1 low", "2 medium", "3 high").
+
+In the header, add the prefix "id_" to any non-categorical variables, so that they are excluded from the visualisation.
           </span>
         </span>
       {/if}
@@ -1575,7 +1575,7 @@
     top: 125%;
     left: 50%;
     transform: translateX(-50%);
-    white-space: normal;
+    white-space: pre-line;
     font-size: 0.8rem;
     line-height: 1.4;
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
