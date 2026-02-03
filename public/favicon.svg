@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- Simplified MultiCat Favicon: Bolder and cleaner -->
+  <!-- Two thick categorical rows/areas implied by the bars -->
+  
+  <!-- Bar 1 (Top - long) -->
+  <rect x="10" y="15" width="80" height="20" rx="2" fill="#a2d4f2" stroke="#000" stroke-width="2" />
+  
+  <!-- Bar 2 (Middle - medium) -->
+  <rect x="10" y="40" width="55" height="20" rx="2" fill="#c4e6a3" stroke="#000" stroke-width="2" />
+
+  <!-- Bar 3 (Bottom - short) -->
+  <rect x="10" y="65" width="30" height="20" rx="2" fill="#ffb38a" stroke="#000" stroke-width="2" />
+</svg>
