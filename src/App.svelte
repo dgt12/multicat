@@ -2,9 +2,8 @@
   // NB: This code is not optimal; it just demonstrates the concepts
   // TODO: Compartmentalise the code into different components (e.g. one for the sidebar)
   
-  // INPUT: Currently expects an array of objects (items) with the same properties (variables)
-  // The property values are the categories
-  // Datasets: titanic{2}.js, mushrooms{_all}.js, covid.js, crime.js, sleep.js
+  // INPUT: CSV file
+  // Old datasets: titanic{2}.js, mushrooms{_all}.js, covid.js, crime.js, sleep.js
   let data = [];
 
   // OTHER IMPORTS
@@ -154,7 +153,9 @@
     if (data && data.length > 0) {
       data.forEach((item) => {
         Object.keys(item).forEach((key) => {
-          vars.add(key);
+          if (!key.startsWith("id_")) {
+            vars.add(key);
+          }
         });
       });
     }
@@ -939,7 +940,31 @@
     >
     <div class="hint">
       {datasetName}
-      {itemCount ? `• ${itemCount} items` : ""}
+      {#if itemCount}
+        • {itemCount} items
+        <span class="info-tooltip-container">
+          <svg
+            class="info-icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <circle cx="12" cy="12" r="10" />
+            <line x1="12" y1="16" x2="12" y2="12" />
+            <line x1="12" y1="8" x2="12.01" y2="8" />
+          </svg>
+          <span class="info-tooltip-text">
+            Click "Load Dataset..." to upload your own CSV file. The file should
+            have one row per item and one column per variable, with a header row
+            at the top. Any non-categorical variables should be prefixed with
+            "id_" in the header, so that they are excluded from the
+            visualisation.
+          </span>
+        </span>
+      {/if}
     </div>
   </div>
 </header>
@@ -1487,7 +1512,7 @@
     justify-content: flex-start;
     height: 48px;
     box-sizing: border-box;
-    overflow: hidden; /* Prevent header from being wider than viewport */
+    /* overflow: hidden; Removed to allow tooltip to be visible */
     width: 100%;
     padding-right: 20%;
   }
@@ -1524,6 +1549,62 @@
     font-size: 0.85rem;
     color: #6b7280;
     white-space: nowrap;
+    display: flex;
+    align-items: center;
+  }
+  .info-tooltip-container {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    margin-left: 4px;
+    cursor: help;
+  }
+  .info-icon {
+    width: 14px;
+    height: 14px;
+    color: #9ca3af;
+  }
+  .info-tooltip-text {
+    visibility: hidden;
+    width: 300px;
+    background-color: #ffffff;
+    color: #374151;
+    text-align: left;
+    border-radius: 6px;
+    padding: 8px 12px;
+    position: absolute;
+    z-index: 2100;
+    top: 125%;
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: normal;
+    font-size: 0.8rem;
+    line-height: 1.4;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    border: 1px solid #d1d5db;
+  }
+  .info-tooltip-container:hover .info-tooltip-text {
+    visibility: visible;
+  }
+  .info-tooltip-text::after {
+    content: "";
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent transparent #ffffff transparent;
+  }
+  .info-tooltip-text::before {
+    content: "";
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    margin-left: -6px;
+    border-width: 6px;
+    border-style: solid;
+    border-color: transparent transparent #d1d5db transparent;
   }
 
   main {
