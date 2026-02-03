@@ -22,6 +22,12 @@
 
     // Reset state for new data
     variableVisibility = {};
+    sortKey = "observed";
+    sortOrder = "desc";
+    appliedSelections.set({});
+    isFilterApplied = false;
+    sortByQueryFirst = true;
+    viewMode = "standard";
     isInitialLoad = true;
     // Trigger reactivity
     data = data;
