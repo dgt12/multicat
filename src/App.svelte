@@ -40,20 +40,12 @@
     await loadCSVText(text, file.name);
   }
 
-
   onMount(async () => {
     try {
-      const res = await fetch(`${import.meta.env.BASE_URL}src/data/titanic.csv`);
+      const res = await fetch(`${import.meta.env.BASE_URL}titanic.csv`);
       if (res.ok) {
         const text = await res.text();
         await loadCSVText(text, "titanic.csv");
-      } else {
-        // Fallback for different environments if needed
-        const res2 = await fetch("src/data/titanic.csv");
-        if (res2.ok) {
-          const text2 = await res2.text();
-          await loadCSVText(text2, "titanic.csv");
-        }
       }
     } catch (err) {
       console.error("Default load failed:", err);
